@@ -1,4 +1,5 @@
 import pytest
+import datetime
 from ..table import Columns, Table, Matrix
 
 
@@ -111,3 +112,38 @@ def test_table():
         table.add_column("X", 0, [1, 2, 3, 4])
     with pytest.raises(ValueError):
         table.add_row(0, [1, 2, 3, 4])
+
+
+def test_select():
+    table = Table(["a", "b", "c", "d"])
+
+    table.append_row(
+        [datetime.date(2020, 3, 19), "Auvergne-Rhône-Alpes", 84, 44])
+    table.append_row(
+        [datetime.date(2020, 3, 19), "Bourgogne-Franche-Comté", 27, 33])
+    table.append_row([datetime.date(2020, 3, 19), "Bretagne", 53, 8])
+    table.append_row(
+        [datetime.date(2020, 3, 19), "Centre-Val de Loire", 24, 6])
+    table.append_row([datetime.date(2020, 3, 19), "Corse", 94, 11])
+    table.append_row([datetime.date(2020, 3, 19), "Grand-Est", 44, 69])
+    table.append_row([datetime.date(2020, 3, 19), "Guadeloupe", 1, 0])
+    table.append_row([datetime.date(2020, 3, 19), "Guyane", 3, 0])
+    table.append_row([datetime.date(2020, 3, 19), "Hauts-de-France", 32, 37])
+    table.append_row([datetime.date(2020, 3, 19), "Ile-de-France", 11, 151])
+    table.append_row([datetime.date(2020, 3, 19), "La Réunion", 4, 0])
+    table.append_row([datetime.date(2020, 3, 19), "Martinique", 2, 0])
+    table.append_row([datetime.date(2020, 3, 19), "Mayotte", 6, 0])
+    table.append_row([datetime.date(2020, 3, 19), "Normandie", 28, 7])
+    table.append_row([datetime.date(2020, 3, 19), "Nouvelle-Aquitaine", 75, 7])
+    table.append_row([datetime.date(2020, 3, 19), "Occitanie", 76, 29])
+    table.append_row([datetime.date(2020, 3, 19), "Pays de la Loire", 52, 11])
+    table.append_row(
+        [datetime.date(2020, 3, 19), "Provence-Alpes-Côte d'Azur", 93, 25])
+    table.append_row(
+        [datetime.date(2020, 3, 20), "Auvergne-Rhône-Alpes", 84, 16])
+    table.append_row(
+        [datetime.date(2020, 3, 20), "Bourgogne-Franche-Comté", 27, 9])
+    a=table.select(dict(a=datetime.date(2020, 3, 19)))
+    assert a.nrows() == table.nrows() - 2
+    a=table.select(dict(a=datetime.date(2020, 3, 19), b="Occitanie"))
+    assert a.nrows() == 1

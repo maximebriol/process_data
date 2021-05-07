@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Dict
 
 
 def _insert(position: int, items: List[Any], item: Any) -> None:
@@ -154,7 +154,7 @@ class Matrix:
 
 class Table:
     def __init__(self, columns: List[str]):
-        self.columns = Columns(columns)
+        self.columns = Columns(columns) #toutes les colonnes ou juste nom des variables
         self.matrix = Matrix(nrows=0, ncolumns=self.columns.get_length())
 
     def nrows(self) -> int:
@@ -189,3 +189,24 @@ class Table:
 
     def remove_row(self, position: int):
         self.matrix.remove_row(position)
+
+    def select(self, column: Dict[str, Any]) -> "Table":
+        indices = set()
+        for name, value in column.items():
+            column_indices = set()
+            index = self.columns.get_index(name)
+            for ix, item in enumerate(self.matrix.get_column(index)):
+                if item == value:
+                    column_indices.add(ix)
+            if indices:
+                indices = indices & column_indices
+            else:
+                indices  = column_indices
+        result = Table(self.columns.columns())
+        for ix in sorted(indices):
+            result.append_row(self.get_row(ix))
+        return result
+                    
+
+
+# columnname --> ressort le nom de toutes les colonnes 
