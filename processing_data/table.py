@@ -190,6 +190,12 @@ class Table:
     def remove_row(self, position: int):
         self.matrix.remove_row(position)
 
+    def column_name(self) -> List[str]:
+        column_name = []
+        for item in range(self.columns.get_length()):
+            column_name.append(self.columns.get_name(item))
+        return column_name
+
     def select(self, column: Dict[str, Any]) -> "Table":
         indices = set()
         for name, value in column.items():
@@ -206,7 +212,32 @@ class Table:
         for ix in sorted(indices):
             result.append_row(self.get_row(ix))
         return result
-                    
+
+    def join(self, other: "Table", on: str) -> "Table":
+        try:
+            index_other = other.columns.get_index(on)  #On recup
+        except ValueError:
+            raise ValueError(f"la colonne {on} n'existe pas dans other")
+        value = self.get_column(on)
+        value_other = other.get_column(on)
+        columns_other = other.column_name()
+        del columns_other[index_other]
+        columns = self.column_name() + columns_other
+        result = Table(columns)
+        for ix, item in enumerate(value):
+            row = self.get_row(ix)
+            try:
+                ix_other = value_other.index(item)
+                row_other = other.get_row(ix_other)
+                del row_other[index_other]
+            except ValueError:
+                # row_other = [None] * (other.columns.get_length() - 1)
+                continue
+
+            result.append_row(row + row_other)
+        return result
 
 
-# columnname --> ressort le nom de toutes les colonnes 
+
+
+# columnname --> ressort le nom de toutes les colonnes

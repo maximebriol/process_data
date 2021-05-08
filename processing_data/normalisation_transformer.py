@@ -1,6 +1,11 @@
+from .table import Table
+from .abc import AbstractTransformer
 
 class NormalisationTransformer(AbstractTransformer) :
-    def normalisation(self, table : Table):
+    def __init__(self, table: "Table"):
+        self.table =table
+
+    def normalisation(self, table: "Table"):
             """Normaliser les colonnes d'un tableau de valeurs
             
             Parameters
@@ -15,7 +20,7 @@ class NormalisationTransformer(AbstractTransformer) :
             ...
             
             """
-    for column in table.ncolumns() : 
-            for i in range(0, len(column)):
-                column[i] = column[i]-column.MeanEstimator.mean()
-    return table.ncolumns() #on retourne pas column ?
+            for self.column in range(self.table.ncolumns()) : 
+                for i in range(0, len(self.column)):
+                    self.column[i] = self.column[i]-self.column.MeanEstimator.mean()
+            return table.ncolumns() #on retourne pas column ?

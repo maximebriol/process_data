@@ -1,5 +1,11 @@
+from .table import Table
+from .abc import AbstractTransformer
+
 class CentrageTransformer(AbstractTransformer):
-    def centrage(self, table : Table):
+    def __init__(self, table: Table):
+        self.table = table
+
+    def centrage(self, table : Table) -> "Table":
             """Centrer les colonnes d'un tableau de valeurs
             
             Parameters
@@ -14,9 +20,9 @@ class CentrageTransformer(AbstractTransformer):
             ...
             
             """
-    table.NormalisationTransformer.normalisation()
-    for column in table.ncolumns():
-            for i in range(O, len(column)):
-                column[i] = column[i]/sqrt(column.VarianceEstimator())
-    return table.ncolumns() 
+            self.table.NormalisationTransformer.normalisation()
+            for column in self.table.ncolumns():
+                for i in range(O, len(column)):
+                    column[i] = column[i]/sqrt(column.VarianceEstimator())
+            return self.table.ncolumns() 
         

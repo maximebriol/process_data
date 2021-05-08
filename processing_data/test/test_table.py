@@ -93,6 +93,7 @@ def test_table():
     assert table.ncolumns() == 3
     assert table.get_column("B") == [1, 20, 30, 40]
     assert table.get_row(2) == [20, 30, 40]
+    assert table.column_name() == ["A", "B", "C"]
     table.remove_column("B")
     assert table.ncolumns() == 2
     assert table.nrows() == 4
@@ -143,7 +144,37 @@ def test_select():
         [datetime.date(2020, 3, 20), "Auvergne-Rhône-Alpes", 84, 16])
     table.append_row(
         [datetime.date(2020, 3, 20), "Bourgogne-Franche-Comté", 27, 9])
-    a=table.select(dict(a=datetime.date(2020, 3, 19)))
+    a = table.select(dict(a=datetime.date(2020, 3, 19)))
     assert a.nrows() == table.nrows() - 2
-    a=table.select(dict(a=datetime.date(2020, 3, 19), b="Occitanie"))
+    a = table.select(dict(a=datetime.date(2020, 3, 19), b="Occitanie"))
     assert a.nrows() == 1
+
+
+def test_join():
+    table1 = Table(["ID", "first_name"])
+    table1.append_row([1, "Mark"])
+    table1.append_row([2, "Steve"])
+    table1.append_row([3, "James"])
+    table1.append_row([4, "Tim"])
+    table1.append_row([5, "Paul"])
+    table1.append_row([6, "Clyde"])
+
+    table2 = Table(["ID", "first_name"])
+    table2.append_row([1, "Juan"])
+    table2.append_row([2, "Tim"])
+    table2.append_row([3, "Helmut"])
+    table2.append_row([4, "Paul"])
+    table2.append_row([5, "Steve"])
+    table2.append_row([6, "Vicenzo"])
+
+    table = table1.join(table2, "first_name")
+    assert table.nrows() == 3
+    assert table.ncolumns() == 3
+    for ix in range(table.nrows()):
+        row = table.get_row(ix)
+        if ix == 0:
+            assert row == [2, "Steve", 5]
+        if ix == 1:
+            assert row == [4, "Tim", 2]
+        if ix == 2:
+            assert row == [5, "Paul", 4]
