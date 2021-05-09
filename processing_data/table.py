@@ -1,4 +1,5 @@
 from typing import Any, List, Dict
+# from . import agregation
 
 
 def _insert(position: int, items: List[Any], item: Any) -> None:
@@ -154,7 +155,8 @@ class Matrix:
 
 class Table:
     def __init__(self, columns: List[str]):
-        self.columns = Columns(columns) #toutes les colonnes ou juste nom des variables
+        self.columns = Columns(
+            columns)  #toutes les colonnes ou juste nom des variables
         self.matrix = Matrix(nrows=0, ncolumns=self.columns.get_length())
 
     def nrows(self) -> int:
@@ -190,13 +192,25 @@ class Table:
     def remove_row(self, position: int):
         self.matrix.remove_row(position)
 
-    def column_name(self) -> List[str]:
+    def column_names(self) -> List[str]:
         column_name = []
         for item in range(self.columns.get_length()):
             column_name.append(self.columns.get_name(item))
         return column_name
 
-    def select(self, column: Dict[str, Any]) -> "Table":
+    def select_columns(self, columns: List[str]) -> "Table":
+        column_index = [self.columns.get_index(item) for item in columns]
+        result = Table([self.columns.get_name(index) for index in column_index])
+        for ix in range(self.nrows()):
+            row = self.get_row(ix)
+            # new_row = []
+            # for index in column_index:
+            #     new_row.append(row[index])
+            # result.append_row(new_row)
+            result.append_row([row[index] for index in column_index])
+        return result
+
+    def select_values(self, column: Dict[str, Any]) -> "Table":
         indices = set()
         for name, value in column.items():
             column_indices = set()
@@ -207,7 +221,7 @@ class Table:
             if indices:
                 indices = indices & column_indices
             else:
-                indices  = column_indices
+                indices = column_indices
         result = Table(self.columns.columns())
         for ix in sorted(indices):
             result.append_row(self.get_row(ix))
@@ -215,29 +229,23 @@ class Table:
 
     def join(self, other: "Table", on: str) -> "Table":
         try:
-            index_other = other.columns.get_index(on)  #On recup
+            index_other = other.columns.get_index(on)
         except ValueError:
             raise ValueError(f"la colonne {on} n'existe pas dans other")
-        value = self.get_column(on)
-        value_other = other.get_column(on)
-        columns_other = other.column_name()
+
+        values = self.get_column(on)
+        values_other = other.get_column(on)
+        columns_other = other.column_names()
         del columns_other[index_other]
-        columns = self.column_name() + columns_other
-        result = Table(columns)
-        for ix, item in enumerate(value):
+        result = Table(self.column_names() + columns_other)
+        for ix, item in enumerate(values):
             row = self.get_row(ix)
             try:
-                ix_other = value_other.index(item)
+                ix_other = values_other.index(item)
                 row_other = other.get_row(ix_other)
                 del row_other[index_other]
+                result.append_row(row + row_other)
             except ValueError:
                 # row_other = [None] * (other.columns.get_length() - 1)
-                continue
-
-            result.append_row(row + row_other)
+                pass
         return result
-
-
-
-
-# columnname --> ressort le nom de toutes les colonnes
