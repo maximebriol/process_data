@@ -21,7 +21,7 @@ def test_agg():
     table.append_row([5, 5, 50, 500])
 
     agg = Aggregation(["A", "B"])
-    mean = agg.transform(table, "mean")
+    mean = agg.transform(table)
     assert mean.ncolumns() == 4
     assert mean.nrows() == 5
 

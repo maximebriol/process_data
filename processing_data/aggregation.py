@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from .table import Table
 from .abc import AbstractTransformer
 
@@ -30,10 +30,11 @@ class Operators:
 
 
 class Aggregation(AbstractTransformer):
-    def __init__(self, on: List[str]) -> None:
+    def __init__(self, on: List[str], operator: Optional[str] = None) -> None:
         self.on = on
+        self.operator = operator or "mean"
 
-    def process(self, table: Table, operator: str) -> Table:
+    def process(self, table: Table) -> Table:
         # Index des colonnes agrégéee.
         indices = [table.columns.get_index(item) for item in self.on]
         # Index des colonnes traitées
@@ -73,8 +74,8 @@ class Aggregation(AbstractTransformer):
             # On ajoute, la valeur agrégée, les valeurs de l'opérateur
             # sélectionnée pour toutes les colonnes traitées
             result.append_row(
-                list(item) + [getattr(agg, operator)() for agg in values])
+                list(item) + [getattr(agg, self.operator)() for agg in values])
         return result
 
-    def transform(self, table: Table, operator: str) -> Table:
-        return self.process(table, operator)
+    def transform(self, table: Table) -> Table:
+        return self.process(table)

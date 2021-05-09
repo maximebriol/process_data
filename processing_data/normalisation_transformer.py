@@ -1,16 +1,19 @@
 from .table import Table
 from .abc import AbstractTransformer
 from .variance_estimator import VarianceEstimator
+from .mean_estimator import MeanEstimator
 
-class NormalizationTransformer(AbstractTransformer) :
+
+class NormalizationTransformer(AbstractTransformer):
     def process(self, table: Table) -> Table:
         names = table.column_names()
         result = Table([])
         for name in names:
             values = table.get_column(name)
             variance = VarianceEstimator.variance(values)
+            mean = MeanEstimator.mean(values)
             for ix in range(len(values)):
-                values[ix] = values[ix]/ (variance)**(0.5)
+                values[ix] = (values[ix] - mean) / (variance)**(0.5)
             result.append_column(name, values)
         return result
 
