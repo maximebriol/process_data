@@ -113,6 +113,11 @@ def test_table():
         table.add_column("X", 0, [1, 2, 3, 4])
     with pytest.raises(ValueError):
         table.add_row(0, [1, 2, 3, 4])
+    table.append_column("H", [5, 7, 10, 11, 12])
+    with pytest.raises(ValueError):
+        table.append_column("D", [6])
+    table = Table([])
+    table.append_column("D", [5, 7, 10])
 
 
 def test_select_values():
@@ -192,4 +197,3 @@ def test_join():
             assert row == [4, "Tim", 2]
         if ix == 2:
             assert row == [5, "Paul", 4]
-

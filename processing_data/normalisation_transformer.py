@@ -1,26 +1,18 @@
 from .table import Table
 from .abc import AbstractTransformer
+from .variance_estimator import VarianceEstimator
 
 class NormalisationTransformer(AbstractTransformer) :
-    def __init__(self, table: "Table"):
-        self.table =table
+    def process(self, table: Table) -> Table:
+        names = table.column_names()
+        result = Table([])
+        for name in names:
+            values = table.get_column(name)
+            variance = VarianceEstimator.variance(values)
+            for ix in range(len(values)):
+                values[ix] = values[ix]/ (variance)**(0.5)
+            result.append_column(name, values)
+        return result
 
-    def normalisation(self, table: "Table"):
-            """Normaliser les colonnes d'un tableau de valeurs
-            
-            Parameters
-            --------
-            table : list(list)
-                tableau de valeurs dont les colonnes sont à normaliser
-            
-            Returns
-            ------
-            list(list)
-                retourne un tableau 
-            ...
-            
-            """
-            for self.column in range(self.table.ncolumns()) : 
-                for i in range(0, len(self.column)):
-                    self.column[i] = self.column[i]-self.column.MeanEstimator.mean()
-            return table.ncolumns() #on retourne pas column ?
+    def transform(self, table: Table) -> Table:
+        return self.process(table)

@@ -27,4 +27,4 @@ def test_mean_estimator():
     assert other.get_column("C") == [30]
     assert other.get_column("D") == [300]
 
-    assert MeanEstimator.mean(table.select_columns(["C"])) == 30
+

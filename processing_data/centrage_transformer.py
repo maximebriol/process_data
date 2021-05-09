@@ -7,12 +7,12 @@ class CentrageTransformer(AbstractTransformer):
     def process(self, table: Table) -> Table:
         names = table.column_names()
         result = Table([])
-        for position, name in enumerate(names):
+        for name in names:
             values = table.get_column(name)
             mean = MeanEstimator.mean(values)
             for ix in range(len(values)):
                 values[ix] -= mean
-            result.add_column(name, position, values)
+            result.append_column(name, values)
         return result
 
     def transform(self, table: Table) -> Table:

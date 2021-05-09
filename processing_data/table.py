@@ -72,6 +72,8 @@ class Matrix:
         return str(self.matrix)
 
     def nrows(self) -> int:
+        if len(self.matrix) == 0:
+            return 0
         return len(self.matrix[0])
 
     def ncolumns(self) -> int:
@@ -145,6 +147,14 @@ class Matrix:
         for jx, item in enumerate(items):
             self.matrix[jx].append(item)
 
+    def append_column(self, items: List[Any]):
+        if self.nrows() != 0:
+            if len(items) != self.nrows():
+                raise ValueError(
+                    f"le nombre de ligne {len(items)} est différent de celui "
+                    f"attendu: {self.nrows()}")
+        self.matrix.append(items)
+
     def remove_column(self, position: int):
         del self.matrix[position]
 
@@ -178,6 +188,17 @@ class Table:
         self.columns.insert(name, position)
         self.matrix.add_column(position, items)
 
+    def append_column(self, name: str, items: List[Any]):
+        nrows = self.nrows()
+        #Si la matrice est vide, on ne vérifie rien.
+        if nrows != 0 and self.ncolumns() != 0:
+            if len(items) != self.nrows():
+                raise ValueError(
+                    f"le nombre de lignes {len(items)} "
+                    f"est différent de celui attendu {self.nrows()}")
+        self.columns.append(name)
+        self.matrix.append_column(items)
+
     def add_row(self, position: int, items: List[Any]):
         self.matrix.add_row(position, items)
 
@@ -200,7 +221,8 @@ class Table:
 
     def select_columns(self, columns: List[str]) -> "Table":
         column_index = [self.columns.get_index(item) for item in columns]
-        result = Table([self.columns.get_name(index) for index in column_index])
+        result = Table(
+            [self.columns.get_name(index) for index in column_index])
         for ix in range(self.nrows()):
             row = self.get_row(ix)
             # new_row = []
