@@ -3,5 +3,5 @@ from .table import Table
 
 
 class MeanEstimator(AbstractTransformer):
-    def fir(self, table: Table) -> Table:
+    def fit(self, table: Table) -> Table:
         ...

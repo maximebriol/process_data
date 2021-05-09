@@ -1,4 +1,4 @@
-from ..normalisation_transformer import NormalisationTransformer
+from ..normalisation_transformer import NormalizationTransformer
 from .. table import Table
 
 def test_normalisation():
@@ -6,7 +6,7 @@ def test_normalisation():
     table.append_row([0,0])
     table.append_row([1,1])
 
-    norm = NormalisationTransformer()
+    norm = NormalizationTransformer()
     other = norm.transform(table)
 
     assert other.get_column("A") == [0,2]

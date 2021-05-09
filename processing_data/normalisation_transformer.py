@@ -2,7 +2,7 @@ from .table import Table
 from .abc import AbstractTransformer
 from .variance_estimator import VarianceEstimator
 
-class NormalisationTransformer(AbstractTransformer) :
+class NormalizationTransformer(AbstractTransformer) :
     def process(self, table: Table) -> Table:
         names = table.column_names()
         result = Table([])

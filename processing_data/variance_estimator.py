@@ -3,6 +3,7 @@ from .table import Table
 from .abc import AbstractEstimator
 from .mean_estimator import MeanEstimator
 
+
 class VarianceEstimator(AbstractEstimator):
     def process(self, table: Table) -> Table:
         column_names = table.column_names()
@@ -18,7 +19,8 @@ class VarianceEstimator(AbstractEstimator):
 
     @staticmethod
     def variance(values: List[Any]) -> float:
-        moy_carre = 0
+        mean_square = 0
         for ix in range(len(values)):
-            moy_carre += (values[ix] * values[ix]) / len(values)
-        return moy_carre - (sum(values) / len(values)) * (sum(values) / len(values))
+            mean_square += (values[ix] * values[ix]) / len(values)
+        return mean_square - (sum(values) / len(values)) * (sum(values) /
+                                                            len(values))
