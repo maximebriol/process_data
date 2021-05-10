@@ -1,6 +1,8 @@
 import pytest
 import datetime
-from ..table import Columns, Table, Matrix
+from ..column import Columns
+from ..matrix import Matrix
+from ..table import Table
 
 
 def test_columns():
