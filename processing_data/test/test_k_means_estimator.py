@@ -19,9 +19,4 @@ def test_k_means():
     table.append_row([100, 2, 1, 1])
     KMeansEstimator().k_means(2, table)
 
-    table = Table(["A", "B", "C"])
-    table.append_row([100,100,100])
-    table.append_row([2,2,2])
-    table.append_row([2,4,1])
-    table.append_row([1,0,1])
-    KMeansEstimator().k_means(2, table)
+
