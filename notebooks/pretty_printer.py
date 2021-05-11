@@ -10,6 +10,3 @@ def print(table: processing_data.Table) -> pandas.DataFrame:
         with path.open("w") as stream:
             stream.write(table.to_csv())
         return pandas.read_csv(path, sep=";")
-
-
-def 
