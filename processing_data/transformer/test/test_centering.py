@@ -1,5 +1,5 @@
-from ..centrage_transformer import CentrageTransformer
-from .. table import Table
+from .. import Centering
+from ...table import Table
 
 def test_centrage():
     table=Table(["A","B","C"])
@@ -7,7 +7,7 @@ def test_centrage():
     table.append_row([4,5,6])
     table.append_row([7,8,9])
 
-    centrage = CentrageTransformer()
-    other = centrage.transform(table)
+    centrage = Centering()
+    other = centrage.process(table)
 
     assert other.get_column("A") == [-3,0,3]

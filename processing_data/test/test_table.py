@@ -1,88 +1,5 @@
 import pytest
-import datetime
-from ..column import Columns
-from ..matrix import Matrix
 from ..table import Table
-
-
-def test_columns():
-    columns = ["A", "B", "C"]
-    obj = Columns(columns)
-
-    assert obj.columns() == columns
-    assert id(obj.columns()) != id(columns)
-    assert obj.get_index("B") == 1
-    assert obj.get_name(1) == "B"
-    assert obj.get_length() == 3
-
-    obj.remove("A")
-    assert obj.get_index("B") == 0
-    assert obj.get_name(0) == "B"
-    assert obj.get_length() == 2
-
-    obj.append("A")
-    assert obj.get_length() == 3
-    assert obj.get_index("A") == 2
-    assert obj.get_name(2) == "A"
-
-    with pytest.raises(ValueError):
-        obj.append("A")
-
-    obj.insert("D", 2)
-    assert obj.get_length() == 4
-    assert obj.get_index("A") == 3
-    assert obj.get_index("D") == 2
-    assert obj.get_name(2) == "D"
-
-    with pytest.raises(ValueError):
-        obj.insert("X", -1)
-
-    with pytest.raises(ValueError):
-        obj.insert("X", 4)
-
-
-def test_matrix():
-    matrix = Matrix(2, 3)
-    assert matrix.nrows() == 2
-    assert matrix.ncolumns() == 3
-    matrix.set_column(0, [0, 10])
-    matrix.set_column(1, [1, 11])
-    matrix.set_column(2, [2, 12])
-    for ix in range(matrix.nrows()):
-        for jx in range(matrix.ncolumns()):
-            assert matrix.get_item(ix, jx) == ix * 10 + jx
-
-    matrix.set_row(0, [10, 20, 30])
-    assert matrix.get_column(1) == [20, 11]
-    assert matrix.get_row(1) == [10, 11, 12]
-    matrix.append_row([20, 21, 22])
-    assert matrix.get_column(1) == [20, 11, 21]
-    assert matrix.get_row(1) == [10, 11, 12]
-    assert matrix.get_row(2) == [20, 21, 22]
-    matrix.remove_column(1)
-    assert matrix.ncolumns() == 2
-    assert matrix.nrows() == 3
-    assert matrix.get_row(1) == [10, 12]
-    matrix.remove_row(1)
-    assert matrix.ncolumns() == 2
-    assert matrix.nrows() == 2
-    assert matrix.get_row(1) == [20, 22]
-
-    with pytest.raises(ValueError):
-        matrix.set_column(-1, [0, 1])
-
-    with pytest.raises(ValueError):
-        matrix.set_column(1, [0, 2, 2])
-
-    with pytest.raises(ValueError):
-        matrix.set_row(1, [0, 2, 2])
-
-    with pytest.raises(ValueError):
-        matrix.set_row(-1, [0, 1])
-
-    assert matrix.get_item(0, 1) == 30
-    matrix.set_item(0, 1, 20)
-    assert matrix.get_item(0, 1) == 20
 
 
 def test_table():
@@ -120,41 +37,6 @@ def test_table():
         table.append_column("D", [6])
     table = Table([])
     table.append_column("D", [5, 7, 10])
-
-
-def test_select_values():
-    table = Table(["a", "b", "c", "d"])
-
-    table.append_row(
-        [datetime.date(2020, 3, 19), "Auvergne-Rhône-Alpes", 84, 44])
-    table.append_row(
-        [datetime.date(2020, 3, 19), "Bourgogne-Franche-Comté", 27, 33])
-    table.append_row([datetime.date(2020, 3, 19), "Bretagne", 53, 8])
-    table.append_row(
-        [datetime.date(2020, 3, 19), "Centre-Val de Loire", 24, 6])
-    table.append_row([datetime.date(2020, 3, 19), "Corse", 94, 11])
-    table.append_row([datetime.date(2020, 3, 19), "Grand-Est", 44, 69])
-    table.append_row([datetime.date(2020, 3, 19), "Guadeloupe", 1, 0])
-    table.append_row([datetime.date(2020, 3, 19), "Guyane", 3, 0])
-    table.append_row([datetime.date(2020, 3, 19), "Hauts-de-France", 32, 37])
-    table.append_row([datetime.date(2020, 3, 19), "Ile-de-France", 11, 151])
-    table.append_row([datetime.date(2020, 3, 19), "La Réunion", 4, 0])
-    table.append_row([datetime.date(2020, 3, 19), "Martinique", 2, 0])
-    table.append_row([datetime.date(2020, 3, 19), "Mayotte", 6, 0])
-    table.append_row([datetime.date(2020, 3, 19), "Normandie", 28, 7])
-    table.append_row([datetime.date(2020, 3, 19), "Nouvelle-Aquitaine", 75, 7])
-    table.append_row([datetime.date(2020, 3, 19), "Occitanie", 76, 29])
-    table.append_row([datetime.date(2020, 3, 19), "Pays de la Loire", 52, 11])
-    table.append_row(
-        [datetime.date(2020, 3, 19), "Provence-Alpes-Côte d'Azur", 93, 25])
-    table.append_row(
-        [datetime.date(2020, 3, 20), "Auvergne-Rhône-Alpes", 84, 16])
-    table.append_row(
-        [datetime.date(2020, 3, 20), "Bourgogne-Franche-Comté", 27, 9])
-    a = table.select_values(dict(a=datetime.date(2020, 3, 19)))
-    assert a.nrows() == table.nrows() - 2
-    a = table.select_values(dict(a=datetime.date(2020, 3, 19), b="Occitanie"))
-    assert a.nrows() == 1
 
 
 def test_select_columns():
@@ -199,3 +81,77 @@ def test_join():
             assert row == [4, "Tim", 2]
         if ix == 2:
             assert row == [5, "Paul", 4]
+
+
+def test_str():
+    table = Table(["jour", "nomReg", "numReg", "incid_rea"])
+
+    table.append_row(["2020-03-19", "Auvergne-Rhone-Alpes", 84, 44])
+    table.append_row(["2020-03-19", "Bourgogne-Franche-Comte", 27, 33])
+    table.append_row(["2020-03-19", "Bretagne", 53, 8])
+    table.append_row(["2020-03-19", "Centre-Val de Loire", 24, 6])
+    table.append_row(["2020-03-19", "Corse", 94, 11])
+    table.append_row(["2020-03-19", "Grand-Est", 44, 69])
+    table.append_row(["2020-03-19", "Guadeloupe", 1, 0])
+    table.append_row(["2020-03-19", "Guyane", 3, 0])
+    table.append_row(["2020-03-19", "Hauts-de-France", 32, 37])
+    table.append_row(["2020-03-19", "Ile-de-France", 11, 151])
+    table.append_row(["2020-03-19", "La Réunion", 4, 0])
+    table.append_row(["2020-03-19", "Martinique", 2, 0])
+    table.append_row(["2020-03-19", "Mayotte", 6, 0])
+    table.append_row(["2020-03-19", "Normandie", 28, 7])
+    table.append_row(["2020-03-19", "Nouvelle-Aquitaine", 75, 7])
+    table.append_row(["2020-03-19", "Occitanie", 76, 29])
+    table.append_row(["2020-03-19", "Pays de la Loire", 52, 11])
+    table.append_row(["2020-03-19", "Provence-Alpes-Cote d'Azur", 93, 25])
+    table.append_row(["2020-03-20", "Auvergne-Rhone-Alpes", 84, 16])
+    table.append_row(["2020-03-20", "Bourgogne-Franche-Comte", 27, 9])
+    table.append_row(["2020-03-20", "Bretagne", 53, 2])
+
+    assert str(
+        table
+    ) == """          jour                      nomReg  numReg  incid_rea
+0   2020-03-19        Auvergne-Rhone-Alpes      84         44
+1   2020-03-19     Bourgogne-Franche-Comte      27         33
+2   2020-03-19                    Bretagne      53          8
+3   2020-03-19         Centre-Val de Loire      24          6
+4   2020-03-19                       Corse      94         11
+5   2020-03-19                   Grand-Est      44         69
+6   2020-03-19                  Guadeloupe       1          0
+7   2020-03-19                      Guyane       3          0
+8   2020-03-19             Hauts-de-France      32         37
+9   2020-03-19               Ile-de-France      11        151
+10  2020-03-19                  La Réunion       4          0
+11  2020-03-19                  Martinique       2          0
+12  2020-03-19                     Mayotte       6          0
+13  2020-03-19                   Normandie      28          7
+14  2020-03-19          Nouvelle-Aquitaine      75          7
+15  2020-03-19                   Occitanie      76         29
+16  2020-03-19            Pays de la Loire      52         11
+17  2020-03-19  Provence-Alpes-Cote d'Azur      93         25
+18  2020-03-20        Auvergne-Rhone-Alpes      84         16
+19  2020-03-20     Bourgogne-Franche-Comte      27          9
+20  2020-03-20                    Bretagne      53          2"""
+
+    assert table.to_csv() == """jour;nomReg;numReg;incid_rea
+2020-03-19;Auvergne-Rhone-Alpes;84;44
+2020-03-19;Bourgogne-Franche-Comte;27;33
+2020-03-19;Bretagne;53;8
+2020-03-19;Centre-Val de Loire;24;6
+2020-03-19;Corse;94;11
+2020-03-19;Grand-Est;44;69
+2020-03-19;Guadeloupe;1;0
+2020-03-19;Guyane;3;0
+2020-03-19;Hauts-de-France;32;37
+2020-03-19;Ile-de-France;11;151
+2020-03-19;La Réunion;4;0
+2020-03-19;Martinique;2;0
+2020-03-19;Mayotte;6;0
+2020-03-19;Normandie;28;7
+2020-03-19;Nouvelle-Aquitaine;75;7
+2020-03-19;Occitanie;76;29
+2020-03-19;Pays de la Loire;52;11
+2020-03-19;Provence-Alpes-Cote d'Azur;93;25
+2020-03-20;Auvergne-Rhone-Alpes;84;16
+2020-03-20;Bourgogne-Franche-Comte;27;9
+2020-03-20;Bretagne;53;2"""

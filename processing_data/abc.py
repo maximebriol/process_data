@@ -8,19 +8,3 @@ class AbstractOperation(abc.ABC):
         ...
 
 
-class AbstractTransformer(AbstractOperation):
-    def process(self, table: Table) -> Table:
-        ...
-
-    @abc.abstractmethod
-    def transform(self, table: Table) -> Table:
-        ...
-
-
-class AbstractEstimator(AbstractOperation):
-    def process(self, table: Table) -> Table:
-        ...
-
-    @abc.abstractmethod
-    def fit(self, table: Table) -> Table:
-        ...

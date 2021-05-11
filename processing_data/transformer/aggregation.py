@@ -1,6 +1,8 @@
 from typing import Any, List, Optional
-from .table import Table
+import datetime
+from ..table import Table
 from .abc import AbstractTransformer
+from .. import estimatator
 
 # def _zip(items:List[List[Any]]):
 #     result = [[] * len(items)]
@@ -19,13 +21,13 @@ class Operators:
     def append(self, value: Any) -> None:
         self.values.append(value)
 
-    def mean(self) -> float:
-        return sum(self.values) / len(self.values)
+    def mean(self) -> Any:
+        return estimatator.Mean.calculate(self.values)
 
-    def min(self) -> float:
+    def min(self) -> Any:
         return min(self.values)
 
-    def max(self) -> float:
+    def max(self) -> Any:
         return max(self.values)
 
 
@@ -76,6 +78,3 @@ class Aggregation(AbstractTransformer):
             result.append_row(
                 list(item) + [getattr(agg, self.operator)() for agg in values])
         return result
-
-    def transform(self, table: Table) -> Table:
-        return self.process(table)

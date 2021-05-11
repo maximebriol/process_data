@@ -1,6 +1,6 @@
-from .table import Table
-from .abc import AbstractTransformer
 import datetime
+from ..table import Table
+from .abc import AbstractTransformer
 
 
 class Windowing(AbstractTransformer):
@@ -20,6 +20,3 @@ class Windowing(AbstractTransformer):
             if self.first <= value <= self.last:
                 result.append_row(row)
         return result
-
-    def transform(self, table: Table) -> Table:
-        return self.process(table)

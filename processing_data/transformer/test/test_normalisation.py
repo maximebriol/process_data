@@ -1,6 +1,6 @@
 import pytest
-from ..normalisation_transformer import NormalizationTransformer
-from ..table import Table
+from ...table import Table
+from ..normalization import Normalization
 
 
 def test_normalisation():
@@ -11,8 +11,8 @@ def test_normalisation():
     table.append_row([3, 30])
     table.append_row([4, 40])
 
-    norm = NormalizationTransformer()
-    other = norm.transform(table)
+    norm = Normalization()
+    other = norm.process(table)
 
     assert [-1.41421356, -0.70710678, 0., 0.70710678,
             1.41421356] == pytest.approx(other.get_column("A"))

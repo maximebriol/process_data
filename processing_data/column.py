@@ -9,16 +9,17 @@ def _insert(position: int, items: List[Any], item: Any) -> None:
         raise ValueError("Impossible d'insérer un élement dans une liste vide")
     if position not in range(len(items)):
         raise ValueError(f"{position} doit être dans l'intervalle "
-                        f"[0, {len(items) - 1}]")
+                         f"[0, {len(items) - 1}]")
     items.insert(position, item)
+
 
 class Columns:
     """Gère la liste des colonnes d'une table"""
     def __init__(self, columns: List[str]) -> None:
-        self._columns = [item for item in columns]
+        self._columns = list(columns)
 
     def columns(self) -> List[str]:
-        return [item for item in self._columns]
+        return list(self._columns)
 
     def get_index(self, name: str) -> int:
         """Obtenir l'index de la colonne"""
