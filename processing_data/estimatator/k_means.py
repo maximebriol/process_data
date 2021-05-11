@@ -1,9 +1,10 @@
 from typing import Any, List
 import copy
 import random
+
+from ..table import Table
 from .abc import AbstractEstimator
-from .mean_estimator import MeanEstimator
-from .table import Table
+from .mean import Mean
 
 
 def euclidean_distance(p1: List[Any], p2: List[Any]) -> float:
@@ -22,7 +23,7 @@ def euclidean_distance(p1: List[Any], p2: List[Any]) -> float:
     --------
     float
         retourne la distance euclidienne entre les 2 points de dimension n
-    
+
     Examples
     --------
     >>>euclidian_distance([1,2],[2,0])
@@ -43,12 +44,12 @@ def center_class(samples: List[List[Any]]) -> List[Any]:
     ---------
     samples:list(list)
         liste d'individus qui contiennent chacun n observations
-    
+
     Returns
     --------
-    list 
+    list
         retourne la liste des moyennes de chaque observation
-    
+
     Examples
     --------
     >>>center_class([[1,2],[2,5]])
@@ -58,34 +59,35 @@ def center_class(samples: List[List[Any]]) -> List[Any]:
     n = len(samples[1])
     center = []
     for ix in range(n):
-        center.append(MeanEstimator.mean([item[ix] for item in samples]))
+        center.append(Mean.calculate([item[ix] for item in samples]))
     return center
 
 
-class KMeansEstimator(AbstractEstimator):
+class KMeans(AbstractEstimator):
     """Algorithme de clustering des K-means"""
-    def fit(self, p1: List[Any], p2: List[Any]):
-        return euclidean_distance(p1, p2)
+    def fit(self, table: Table) -> Table:
+        raise NotImplementedError()
 
-    def k_means(self, nb_clusters, table: Table):
+    @staticmethod
+    def calculate(nb_clusters, table: Table) -> List[List[Any]]:
         """Algorithme de clustering du K-means
 
         A partir d'un tableau de valeurs, regroupe des observations en classes
-        
+
         Parameters
         ----------
         nb_clusters:float
             nombre de clusters souhaité par l'utilisateur
         table:list(list)
             tableau de valeur, on souhaiter classer les observations en colonnes
-        
+
         Returns
         ---------
         list(list)
             Une liste de liste, de taille nb_clusters où dans chaque élément on
             retrouve les observations les plus proches par rapport à la distance
             euclidienne
-        
+
         Examples
         ---------
         table=[[100,100,100],[2,2,2],[2,4,1],[1,0,1]]
@@ -102,7 +104,7 @@ class KMeansEstimator(AbstractEstimator):
             # d'une observation
             center_classes.append(values)
         # Liste de listes d'observations d'une même classe
-        cluster = None
+        cluster = []
         # 15 est mis au hasard, jsp qd définir le cran d'arrêt
         for _ in range(15):
             end_cluster = copy.deepcopy(cluster)

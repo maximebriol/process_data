@@ -1,8 +1,8 @@
-from ..aggregation import Aggregation
-from ..table import Table
+from ...table import Table
+from .. import Mean
 
 
-def test_agg():
+def test_mean_estimator():
     table = Table(["A", "B", "C", "D"])
     table.append_row([1, 1, 10, 100])
     table.append_row([1, 1, 10, 100])
@@ -20,12 +20,9 @@ def test_agg():
     table.append_row([5, 5, 50, 500])
     table.append_row([5, 5, 50, 500])
 
-    agg = Aggregation(["A", "B"])
-    mean = agg.transform(table)
-    assert mean.ncolumns() == 4
-    assert mean.nrows() == 5
-
-    for ix in range(mean.nrows()):
-        row = mean.get_row(ix)
-        ix += 1
-        assert row == [ix, ix, ix * 10, ix * 100]
+    estimator = Mean()
+    other = estimator.fit(table)
+    assert other.get_column("A") == [3]
+    assert other.get_column("B") == [3]
+    assert other.get_column("C") == [30]
+    assert other.get_column("D") == [300]

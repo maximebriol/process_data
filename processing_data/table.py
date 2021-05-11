@@ -1,4 +1,5 @@
 from typing import Any, List, Dict
+import copy
 from .column import Columns
 from .matrix import Matrix
 
@@ -20,6 +21,9 @@ class Table:
             columns)  #toutes les colonnes ou juste nom des variables
         self.matrix = Matrix(nrows=0, ncolumns=self.columns.get_length())
 
+    def copy(self) -> "Table":
+        return copy.deepcopy(self)
+
     def nrows(self) -> int:
         return self.matrix.nrows()
 
@@ -28,6 +32,9 @@ class Table:
 
     def get_column(self, name: str) -> List[Any]:
         return self.matrix.get_column(self.columns.get_index(name))
+
+    def set_column(self, name: str, values: List[Any]) -> None:
+        self.matrix.set_column(self.columns.get_index(name), values)
 
     def get_row(self, index: int) -> List[Any]:
         return self.matrix.get_row(index)
@@ -64,6 +71,41 @@ class Table:
     def remove_row(self, position: int):
         self.matrix.remove_row(position)
 
+    def __str__(self) -> str:
+        def column_size(index: int) -> int:
+            size = [len(self.columns.get_name(index))]
+            size.extend(
+                [len(str(item)) for item in self.matrix.get_column(index)])
+            return max(size)
+
+        # Indices des colonnes
+        indices = list(range(self.ncolumns()))
+        # Libellés des colonnes
+        names = [self.columns.get_name(index) for index in indices]
+        # Formats des colonnes
+        formats = [f"{{:>{column_size(index)}}}" for index in indices]
+        # Format des identifiants des colonnes
+        idents = f"{{:<{len(str(self.nrows()))}}}"
+        # En tête de la table
+        header = "  ".join(
+            [idents.format("")] +
+            [formats[index].format(names[index]) for index in indices])
+        # Lignes
+        lines = [header]
+        # Insertion des numéro de lignes et des valeurs de la ligne
+        for ix in range(self.nrows()):
+            row = self.get_row(ix)
+            lines.append("  ".join(
+                [idents.format(ix)] +
+                [formats[index].format(str(row[index])) for index in indices]))
+        return "\n".join(lines)
+
+    def to_csv(self) -> str:
+        lines = [";".join(self.column_names())]
+        for ix in range(self.nrows()):
+            lines.append(";".join(str(item) for item in self.get_row(ix)))
+        return "\n".join(lines)
+
     def column_names(self) -> List[str]:
         column_name = []
         for item in range(self.columns.get_length()):
@@ -81,23 +123,6 @@ class Table:
             #     new_row.append(row[index])
             # result.append_row(new_row)
             result.append_row([row[index] for index in column_index])
-        return result
-
-    def select_values(self, column: Dict[str, Any]) -> "Table":
-        indices = set()
-        for name, value in column.items():
-            column_indices = set()
-            index = self.columns.get_index(name)
-            for ix, item in enumerate(self.matrix.get_column(index)):
-                if item == value:
-                    column_indices.add(ix)
-            if indices:
-                indices = indices & column_indices
-            else:
-                indices = column_indices
-        result = Table(self.columns.columns())
-        for ix in sorted(indices):
-            result.append_row(self.get_row(ix))
         return result
 
     def join(self, other: "Table", on: str) -> "Table":

@@ -1,8 +1,8 @@
-from typing import Optional
-from .abc import AbstractTransformer
-from .table import Table
 import csv
 import json
+from typing import Optional
+from .abc import AbstractTransformer
+from ..table import Table
 
 
 class Import(AbstractTransformer):
@@ -11,7 +11,7 @@ class Import(AbstractTransformer):
         self.filename = filename
 
 
-class ImportCSV(Import):
+class CSVReader(Import):
     def __init__(self,
                  filename: str,
                  encoding: Optional[str] = None,
@@ -20,7 +20,7 @@ class ImportCSV(Import):
         self.delimiter = delimiter or ';'
         self.encoding = encoding or 'ISO-8859-1'
 
-    def process(self) -> Table:
+    def process(self, *args) -> Table:
         data = []
         with open(self.filename, encoding=self.encoding) as csvfile:
             covidreader = csv.reader(csvfile, delimiter=self.delimiter)
@@ -31,16 +31,13 @@ class ImportCSV(Import):
             result.append_row(item)
         return result
 
-    def transform(self) -> Table:
-        return self.process()
 
-
-class ImportJSON(Import):
+class JSONReader(Import):
     def __init__(self, filename: str, key: Optional[str] = None):
         super().__init__(filename)
         self.key = key
 
-    def process(self) -> Table:
+    def process(self, *args) -> Table:
         with open(self.filename) as json_file:
             data = json.load(json_file)
         if self.key is not None:
@@ -49,6 +46,3 @@ class ImportJSON(Import):
         for item in data:
             result.append_row(item.values())
         return result
-
-    def transform(self) -> Table:
-        return self.process()

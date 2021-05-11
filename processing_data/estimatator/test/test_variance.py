@@ -1,5 +1,5 @@
-from ..table import Table
-from ..variance_estimator import VarianceEstimator
+from ...table import Table
+from .. import Variance
 
 
 def test_variance_estimator():
@@ -8,6 +8,6 @@ def test_variance_estimator():
     table.append_row([3, 5, 8])
     table.append_row([3, 6, 9])
 
-    estimator = VarianceEstimator()
+    estimator = Variance()
     other = estimator.fit(table)
     assert other.get_column("A") == [2]
