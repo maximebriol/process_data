@@ -5,7 +5,7 @@ from ..date import Date
 
 
 def test_importation():
-    covid = CSVReader(str(data.covid()))
+    covid = CSVReader(str(data.covid_incid_reg()))
     tableau = covid.process()
 
     date = Date(dict(jour="%Y-%m-%d"))

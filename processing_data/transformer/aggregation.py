@@ -30,6 +30,9 @@ class Operators:
     def max(self) -> Any:
         return max(self.values)
 
+    def count(self) -> Any:
+        return len(self.values)
+
 
 class Aggregation(AbstractTransformer):
     def __init__(self, on: List[str], operator: Optional[str] = None) -> None:

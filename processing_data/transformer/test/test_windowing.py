@@ -7,7 +7,7 @@ from ..windowing import Windowing
 
 def test_windowing():
     
-    covid = CSVReader(str(data.covid()))
+    covid = CSVReader(str(data.covid_incid_reg()))
     table = covid.process()
 
     date = Date(dict(jour="%Y-%m-%d"))
