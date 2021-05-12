@@ -31,7 +31,9 @@ def euclidean_distance(p1: List[Any], p2: List[Any]) -> float:
     """
     sum = 0
     for ix in range(len(p1)):
+        #On calcule la distance euclidienne au carré
         sum += (p1[ix] - p2[ix])**2
+        #On récupère la distance euclidienne.
     return sum**0.5
 
 
@@ -60,6 +62,7 @@ def center_class(samples: List[List[Any]]) -> List[Any]:
     center = []
     for ix in range(n):
         center.append(Mean.calculate([item[ix] for item in samples]))
+        #On  calcule les centres de toutes les classes.
     return center
 
 

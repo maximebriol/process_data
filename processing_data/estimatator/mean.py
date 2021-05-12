@@ -19,6 +19,24 @@ class Mean(AbstractEstimator):
 
     @staticmethod
     def calculate(values: List[Any]) -> Any:
+        """Calcule la moyenne d’une liste 
+ 
+	Parameters
+	---------
+	values : list
+		liste de valeurs, on souhaite la moyenne de cette liste
+	
+	Returns
+	--------
+	float 
+		nombre qui est la moyenne de la liste
+ 
+	Examples
+	--------
+	>>>mean([1,3,4,2,0])
+	2
+        """
+
         if len(values) and isinstance(values[0], datetime.datetime):
             epoch = datetime.datetime(1970, 1, 1)
             values = [(item - epoch).total_seconds() for item in values]
